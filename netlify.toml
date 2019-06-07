@@ -1,5 +1,7 @@
 [build]
   functions = "./functions"
+  build = "npm run functions:build && npm run build"
+  publish = "dist"
 
 [[redirects]]
   from = "/api/*"
