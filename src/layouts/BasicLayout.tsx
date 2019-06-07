@@ -3,7 +3,6 @@
  * You can view component api by:
  * https://github.com/ant-design/ant-design-pro-layout
  */
-
 import { ConnectState, ConnectProps } from '@/models/connect';
 import RightContent from '@/components/GlobalHeader/RightContent';
 import { connect } from 'dva';
@@ -17,6 +16,7 @@ import {
   BasicLayoutProps as ProLayoutComponentsProps,
   MenuDataItem,
   Settings,
+  SettingDrawer,
 } from '@ant-design/pro-layout';
 import Link from 'umi/link';
 export interface BasicLayoutProps extends ProLayoutComponentsProps, ConnectProps {
@@ -45,6 +45,7 @@ const footerRender: BasicLayoutProps['footerRender'] = (_, defaultDom) => {
   if (!isAntDesignPro()) {
     return defaultDom;
   }
+
   return (
     <>
       {defaultDom}
@@ -82,10 +83,10 @@ const BasicLayout: React.FC<BasicLayoutProps> = props => {
       });
     }
   });
-
   /**
    * init variables
    */
+
   const handleMenuCollapse = (payload: boolean) =>
     dispatch &&
     dispatch({
@@ -94,33 +95,44 @@ const BasicLayout: React.FC<BasicLayoutProps> = props => {
     });
 
   return (
-    <ProLayoutComponents
-      logo={logo}
-      onCollapse={handleMenuCollapse}
-      menuItemRender={(menuItemProps, defaultDom) => {
-        return <Link to={menuItemProps.path}>{defaultDom}</Link>;
-      }}
-      breadcrumbRender={(routers = []) => {
-        return [
-          {
-            path: '/',
-            breadcrumbName: formatMessage({
-              id: 'menu.home',
-              defaultMessage: 'Home',
-            }),
-          },
-          ...routers,
-        ];
-      }}
-      footerRender={footerRender}
-      menuDataRender={menuDataRender}
-      formatMessage={formatMessage}
-      rightContentRender={rightProps => <RightContent {...rightProps} />}
-      {...props}
-      {...settings}
-    >
-      {children}
-    </ProLayoutComponents>
+    <>
+      <ProLayoutComponents
+        logo={logo}
+        onCollapse={handleMenuCollapse}
+        menuItemRender={(menuItemProps, defaultDom) => {
+          return <Link to={menuItemProps.path}>{defaultDom}</Link>;
+        }}
+        breadcrumbRender={(routers = []) => {
+          return [
+            {
+              path: '/',
+              breadcrumbName: formatMessage({
+                id: 'menu.home',
+                defaultMessage: 'Home',
+              }),
+            },
+            ...routers,
+          ];
+        }}
+        footerRender={footerRender}
+        menuDataRender={menuDataRender}
+        formatMessage={formatMessage}
+        rightContentRender={rightProps => <RightContent {...rightProps} />}
+        {...props}
+        {...settings}
+      >
+        {children}
+      </ProLayoutComponents>
+      <SettingDrawer
+        settings={settings}
+        onSettingChange={config =>
+          dispatch({
+            type: 'settings/changeSetting',
+            payload: config,
+          })
+        }
+      />
+    </>
   );
 };
 

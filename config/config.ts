@@ -1,13 +1,13 @@
 // https://umijs.org/config/
 import os from 'os';
+import * as path from 'path';
 import slash from 'slash2';
 import { IPlugin, IConfig } from 'umi-types';
 import defaultSettings from './defaultSettings';
 import webpackPlugin from './plugin.config';
-const { pwa, primaryColor } = defaultSettings;
+const { pwa, primaryColor } = defaultSettings; // preview.pro.ant.design only do not use in your production ;
 
-// preview.pro.ant.design only do not use in your production ;
-// preview.pro.ant.design 专用环境变量，请不要在你的项目中使用它。
+const lessPath = path.join(__dirname, '..', 'src', 'custom.less'); // preview.pro.ant.design 专用环境变量，请不要在你的项目中使用它。
 
 const { ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION, TEST, NODE_ENV } = process.env;
 const plugins: IPlugin[] = [
@@ -102,15 +102,90 @@ export default {
   routes: [
     {
       path: '/',
-      component: '../layouts/BasicLayout',
-      Routes: ['src/pages/Authorized'],
-      authority: ['admin', 'user'],
+      component: '../layouts/BlankLayout',
       routes: [
         {
+          path: '/user',
+          component: '../layouts/UserLayout',
+          routes: [
+            {
+              path: '/user',
+              redirect: '/user/login',
+            },
+          ],
+        },
+        {
           path: '/',
-          name: 'welcome',
-          icon: 'smile',
-          component: './Welcome',
+          component: '../layouts/BasicLayout',
+          Routes: ['src/pages/Authorized'],
+          authority: ['admin', 'user'],
+          routes: [
+            {
+              path: '/dashboard',
+              name: 'dashboard',
+              icon: 'dashboard',
+              routes: [],
+            },
+            {
+              path: '/form',
+              icon: 'form',
+              name: 'form',
+              routes: [],
+            },
+            {
+              path: '/list',
+              icon: 'table',
+              name: 'list',
+              routes: [
+                {
+                  path: '/list/search',
+                  name: 'search-list',
+                  component: './list/search',
+                  routes: [
+                    {
+                      path: '/list/search',
+                      redirect: '/list/search/articles',
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              path: '/profile',
+              name: 'profile',
+              icon: 'profile',
+              routes: [],
+            },
+            {
+              name: 'result',
+              icon: 'check-circle-o',
+              path: '/result',
+              routes: [],
+            },
+            {
+              name: 'exception',
+              icon: 'warning',
+              path: '/exception',
+              routes: [],
+            },
+            {
+              name: 'account',
+              icon: 'user',
+              path: '/account',
+              routes: [],
+            },
+            {
+              name: 'editor',
+              icon: 'highlight',
+              path: '/editor',
+              routes: [],
+            },
+            {
+              path: '/',
+              redirect: '/dashboard/analysis',
+              authority: ['admin', 'user'],
+            },
+          ],
         },
       ],
     },
@@ -118,6 +193,7 @@ export default {
   // Theme for antd
   // https://ant.design/docs/react/customize-theme-cn
   theme: {
+    hack: `true; @import "${lessPath}";`,
     'primary-color': primaryColor,
   },
   // proxy: {
