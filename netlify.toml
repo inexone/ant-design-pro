@@ -1,6 +1,6 @@
 [build]
   functions = "./functions"
-  build = "npm run functions:build && npm run build"
+  command = "npm run functions:build && npm run build"
   publish = "dist"
 
 [[redirects]]
